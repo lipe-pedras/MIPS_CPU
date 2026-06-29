@@ -5,3 +5,6 @@ simulation/
 work/
 sim.sh
 transcript
+*v.bak
+*.qws
+*.rpt
