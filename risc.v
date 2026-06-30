@@ -144,9 +144,11 @@ module risc (
     );
 
     InstMem instmem (
-        .clk  (CLK_SYS),
-        .addr (iADDR_Prog),
-        .INST (instInternal)
+        .clock  (CLK_SYS),
+        .address (iADDR_Prog),
+		  .data(32'h0),
+		  .wren(0),
+        .q (instInternal)
     );
 
     // selecao instrucao interna x externa

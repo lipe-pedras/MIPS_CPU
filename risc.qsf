@@ -4,7 +4,7 @@
 # =============================================================================
 set_global_assignment -name FAMILY "Cyclone IV GX"
 set_global_assignment -name DEVICE EP4CGX22CF19C7
-set_global_assignment -name TOP_LEVEL_ENTITY ADDRDecoding
+set_global_assignment -name TOP_LEVEL_ENTITY risc
 set_global_assignment -name ORIGINAL_QUARTUS_VERSION 18.1
 set_global_assignment -name PROJECT_OUTPUT_DIRECTORY output_files
 
@@ -24,10 +24,51 @@ set_global_assignment -name MAX_CORE_JUNCTION_TEMP 85
 set_global_assignment -name POWER_PRESET_COOLING_SOLUTION "23 MM HEAT SINK WITH 200 LFPM AIRFLOW"
 set_global_assignment -name POWER_BOARD_THERMAL_MODEL "NONE (CONSERVATIVE)"
 set_global_assignment -name EDA_TEST_BENCH_ENABLE_STATUS TEST_BENCH_MODE -section_id eda_simulation
-set_global_assignment -name EDA_NATIVELINK_SIMULATION_TEST_BENCH ADDRDecoding_TB -section_id eda_simulation
+set_global_assignment -name EDA_NATIVELINK_SIMULATION_TEST_BENCH risc_TB -section_id eda_simulation
 set_global_assignment -name EDA_TEST_BENCH_NAME risc_TB -section_id eda_simulation
 set_global_assignment -name EDA_DESIGN_INSTANCE_NAME NA -section_id risc_TB
 set_global_assignment -name EDA_TEST_BENCH_MODULE_NAME risc_TB -section_id risc_TB
+set_global_assignment -name EDA_TEST_BENCH_NAME mux_TB -section_id eda_simulation
+set_global_assignment -name EDA_DESIGN_INSTANCE_NAME NA -section_id mux_TB
+set_global_assignment -name EDA_TEST_BENCH_MODULE_NAME mux_TB -section_id mux_TB
+set_global_assignment -name EDA_TEST_BENCH_NAME pc_TB -section_id eda_simulation
+set_global_assignment -name EDA_DESIGN_INSTANCE_NAME NA -section_id pc_TB
+set_global_assignment -name EDA_TEST_BENCH_MODULE_NAME pc_TB -section_id pc_TB
+set_global_assignment -name EDA_TEST_BENCH_NAME ADDRDecoding_Prog_TB -section_id eda_simulation
+set_global_assignment -name EDA_DESIGN_INSTANCE_NAME NA -section_id ADDRDecoding_Prog_TB
+set_global_assignment -name EDA_TEST_BENCH_MODULE_NAME ADDRDecoding_Prog_TB -section_id ADDRDecoding_Prog_TB
+set_global_assignment -name EDA_TEST_BENCH_NAME extend_TB -section_id eda_simulation
+set_global_assignment -name EDA_DESIGN_INSTANCE_NAME NA -section_id extend_TB
+set_global_assignment -name EDA_TEST_BENCH_MODULE_NAME extend_TB -section_id extend_TB
+set_global_assignment -name EDA_TEST_BENCH_NAME control_TB -section_id eda_simulation
+set_global_assignment -name EDA_DESIGN_INSTANCE_NAME NA -section_id control_TB
+set_global_assignment -name EDA_TEST_BENCH_MODULE_NAME control_TB -section_id control_TB
+set_global_assignment -name EDA_TEST_BENCH_NAME registerfile_TB -section_id eda_simulation
+set_global_assignment -name EDA_DESIGN_INSTANCE_NAME NA -section_id registerfile_TB
+set_global_assignment -name EDA_TEST_BENCH_MODULE_NAME registerfile_TB -section_id registerfile_TB
+set_global_assignment -name EDA_TEST_BENCH_NAME register_TB -section_id eda_simulation
+set_global_assignment -name EDA_DESIGN_INSTANCE_NAME NA -section_id register_TB
+set_global_assignment -name EDA_TEST_BENCH_MODULE_NAME register_TB -section_id register_TB
+set_global_assignment -name EDA_TEST_BENCH_NAME alu_TB -section_id eda_simulation
+set_global_assignment -name EDA_DESIGN_INSTANCE_NAME NA -section_id alu_TB
+set_global_assignment -name EDA_TEST_BENCH_MODULE_NAME alu_TB -section_id alu_TB
+set_global_assignment -name EDA_TEST_BENCH_NAME ADDRDecoding_TB -section_id eda_simulation
+set_global_assignment -name EDA_DESIGN_INSTANCE_NAME NA -section_id ADDRDecoding_TB
+set_global_assignment -name EDA_TEST_BENCH_MODULE_NAME ADDRDecoding_TB -section_id ADDRDecoding_TB
+set_global_assignment -name PARTITION_NETLIST_TYPE SOURCE -section_id Top
+set_global_assignment -name PARTITION_FITTER_PRESERVATION_LEVEL PLACEMENT_AND_ROUTING -section_id Top
+set_global_assignment -name PARTITION_COLOR 16764057 -section_id Top
+set_global_assignment -name EDA_TEST_BENCH_FILE risc_TB.v -section_id risc_TB
+set_global_assignment -name EDA_TEST_BENCH_FILE mux_TB.v -section_id mux_TB
+set_global_assignment -name EDA_TEST_BENCH_FILE pc_TB.v -section_id pc_TB
+set_global_assignment -name EDA_TEST_BENCH_FILE ADDRDecoding_Prog_TB.v -section_id ADDRDecoding_Prog_TB
+set_global_assignment -name EDA_TEST_BENCH_FILE extend_TB.v -section_id extend_TB
+set_global_assignment -name EDA_TEST_BENCH_FILE control_TB.v -section_id control_TB
+set_global_assignment -name EDA_TEST_BENCH_FILE registerfile_TB.v -section_id registerfile_TB
+set_global_assignment -name EDA_TEST_BENCH_FILE register_TB.v -section_id register_TB
+set_global_assignment -name EDA_TEST_BENCH_FILE alu_TB.v -section_id alu_TB
+set_global_assignment -name EDA_TEST_BENCH_FILE ADDRDecoding_TB.v -section_id ADDRDecoding_TB
+set_global_assignment -name SDC_FILE simulation_constraints.sdc
 set_global_assignment -name VERILOG_FILE control_TB.v
 set_global_assignment -name VERILOG_FILE InstMem_TB.v
 set_global_assignment -name VERILOG_FILE register_TB.v
@@ -59,44 +100,5 @@ set_global_assignment -name VERILOG_FILE Multiplicador/CONTROL.v
 set_global_assignment -name VERILOG_FILE Multiplicador/Multiplicador.v
 set_global_assignment -name VERILOG_FILE risc.v
 set_global_assignment -name SDC_FILE risc.sdc
-set_global_assignment -name EDA_TEST_BENCH_NAME mux_TB -section_id eda_simulation
-set_global_assignment -name EDA_DESIGN_INSTANCE_NAME NA -section_id mux_TB
-set_global_assignment -name EDA_TEST_BENCH_MODULE_NAME mux_TB -section_id mux_TB
-set_global_assignment -name EDA_TEST_BENCH_NAME pc_TB -section_id eda_simulation
-set_global_assignment -name EDA_DESIGN_INSTANCE_NAME NA -section_id pc_TB
-set_global_assignment -name EDA_TEST_BENCH_MODULE_NAME pc_TB -section_id pc_TB
-set_global_assignment -name EDA_TEST_BENCH_NAME ADDRDecoding_Prog_TB -section_id eda_simulation
-set_global_assignment -name EDA_DESIGN_INSTANCE_NAME NA -section_id ADDRDecoding_Prog_TB
-set_global_assignment -name EDA_TEST_BENCH_MODULE_NAME ADDRDecoding_Prog_TB -section_id ADDRDecoding_Prog_TB
-set_global_assignment -name EDA_TEST_BENCH_NAME extend_TB -section_id eda_simulation
-set_global_assignment -name EDA_DESIGN_INSTANCE_NAME NA -section_id extend_TB
-set_global_assignment -name EDA_TEST_BENCH_MODULE_NAME extend_TB -section_id extend_TB
-set_global_assignment -name EDA_TEST_BENCH_NAME control_TB -section_id eda_simulation
-set_global_assignment -name EDA_DESIGN_INSTANCE_NAME NA -section_id control_TB
-set_global_assignment -name EDA_TEST_BENCH_MODULE_NAME control_TB -section_id control_TB
-set_global_assignment -name EDA_TEST_BENCH_NAME registerfile_TB -section_id eda_simulation
-set_global_assignment -name EDA_DESIGN_INSTANCE_NAME NA -section_id registerfile_TB
-set_global_assignment -name EDA_TEST_BENCH_MODULE_NAME registerfile_TB -section_id registerfile_TB
-set_global_assignment -name EDA_TEST_BENCH_NAME register_TB -section_id eda_simulation
-set_global_assignment -name EDA_DESIGN_INSTANCE_NAME NA -section_id register_TB
-set_global_assignment -name EDA_TEST_BENCH_MODULE_NAME register_TB -section_id register_TB
-set_global_assignment -name EDA_TEST_BENCH_NAME alu_TB -section_id eda_simulation
-set_global_assignment -name EDA_DESIGN_INSTANCE_NAME NA -section_id alu_TB
-set_global_assignment -name EDA_TEST_BENCH_MODULE_NAME alu_TB -section_id alu_TB
-set_global_assignment -name PARTITION_NETLIST_TYPE SOURCE -section_id Top
-set_global_assignment -name PARTITION_FITTER_PRESERVATION_LEVEL PLACEMENT_AND_ROUTING -section_id Top
-set_global_assignment -name PARTITION_COLOR 16764057 -section_id Top
-set_global_assignment -name EDA_TEST_BENCH_FILE risc_TB.v -section_id risc_TB
-set_global_assignment -name EDA_TEST_BENCH_FILE mux_TB.v -section_id mux_TB
-set_global_assignment -name EDA_TEST_BENCH_FILE pc_TB.v -section_id pc_TB
-set_global_assignment -name EDA_TEST_BENCH_FILE ADDRDecoding_Prog_TB.v -section_id ADDRDecoding_Prog_TB
-set_global_assignment -name EDA_TEST_BENCH_FILE extend_TB.v -section_id extend_TB
-set_global_assignment -name EDA_TEST_BENCH_FILE control_TB.v -section_id control_TB
-set_global_assignment -name EDA_TEST_BENCH_FILE registerfile_TB.v -section_id registerfile_TB
-set_global_assignment -name EDA_TEST_BENCH_FILE register_TB.v -section_id register_TB
-set_global_assignment -name EDA_TEST_BENCH_FILE alu_TB.v -section_id alu_TB
-set_global_assignment -name EDA_TEST_BENCH_NAME ADDRDecoding_TB -section_id eda_simulation
-set_global_assignment -name EDA_DESIGN_INSTANCE_NAME NA -section_id ADDRDecoding_TB
-set_global_assignment -name EDA_TEST_BENCH_MODULE_NAME ADDRDecoding_TB -section_id ADDRDecoding_TB
-set_global_assignment -name EDA_TEST_BENCH_FILE ADDRDecoding_TB.v -section_id ADDRDecoding_TB
+set_global_assignment -name QIP_FILE InstMem.qip
 set_instance_assignment -name PARTITION_HIERARCHY root_partition -to | -section_id Top
