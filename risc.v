@@ -310,11 +310,11 @@ module risc (
     );
 
     datamemory datamem (
-        .clk  (CLK_SYS),
-        .addr (iAddress),
-        .din  (din),
-        .we   (iWE),
-        .dout (dout)
+        .clock  (CLK_SYS),
+        .address (iAddress),
+        .data  (din),
+        .wren   (iWE),
+        .q (dout)
     );
 
     assign Data_BUS_WRITE = din;   // escrita externa
