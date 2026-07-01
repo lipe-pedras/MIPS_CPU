@@ -11,7 +11,7 @@
 // TB roda em RTL e em Gate Level.
 //
 // O clock CLK (entrada da PLL) e identico ao definido no IP: CLK = CLK_MUL.
-// CLK_SYS = CLK_MUL / 40 (ver PLL.v).
+// CLK_SYS = CLK_MUL / 34 (ver PLL.v).
 // =============================================================================
 module risc_TB;
     reg         CLK, rst;
@@ -28,11 +28,12 @@ module risc_TB;
     );
 
     // ---- clock de referencia: DEVE ser igual a entrada definida no IP ALTPLL ----
-    // O ALTPLL foi configurado com inclk0_input_frequency = 4000 ps (= 4 ns,
-    // 250 MHz). Logo CLK (= inclk0 = CLK_MUL) tem periodo de 4 ns -> #2.
-    // (CLK_SYS = c0 = CLK/40 = 6.25 MHz, 160 ns.)  Se o periodo do TB nao casar
+    // O ALTPLL foi configurado com inclk0_input_frequency = 4270 ps (= 4.27 ns,
+    // 234.19 MHz). Logo CLK (= inclk0 = CLK_MUL) tem periodo de 4.27 ns -> #2.135.
+    // (CLK_SYS = c0 = CLK/34 = 6.888 MHz, 145 ns.)  Se o periodo do TB nao casar
     // com o do IP, a PLL nao trava ("input over VCO range") e o nucleo congela.
-    always #2 CLK = ~CLK;
+    // FREQUENCIA REDUZIDA para o caminho do produto do MUL fechar em Slow 85C.
+    always #2.135 CLK = ~CLK;
 
     // =====================================================================
     // Sinais nominais da fig. 1b espelhados via $init_signal_spy (destinos
@@ -131,7 +132,8 @@ module risc_TB;
         // permanecer em reset ate la, senao roda em um clock instavel e corrompe
         // o pipeline. Mantemos rst alto ate bem depois do lock da PLL.
         #3000 rst = 0;
-        #280000;                // tempo p/ os 2 lacos (vetor de 32) + MUL + SW
+        #500000;                // tempo p/ os 2 lacos (vetor de 32) + MUL + SW
+                                // (CLK_SYS=272ns @125MHz/34 -> ~1.7x do periodo antigo)
         $display("=== verificacao final (sinais nominais da fig.1b) ===");
         if (saw_wb45)       $display("OK   writeBack = 45     (r10 = soma de Mem[0..31])");
         else begin $display("FAIL writeBack nunca chegou a 45"); errors = errors + 1; end

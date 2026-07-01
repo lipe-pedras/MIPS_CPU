@@ -76,7 +76,6 @@ set_global_assignment -name VERILOG_FILE alu.v
 set_global_assignment -name VERILOG_FILE extend.v
 set_global_assignment -name VERILOG_FILE control.v
 set_global_assignment -name VERILOG_FILE registerfile.v
-set_global_assignment -name VERILOG_FILE InstMem.v
 set_global_assignment -name VERILOG_FILE datamemory.v
 set_global_assignment -name VERILOG_FILE ADDRDecoding.v
 set_global_assignment -name VERILOG_FILE ADDRDecoding_Prog.v

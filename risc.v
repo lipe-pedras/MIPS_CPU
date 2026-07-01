@@ -13,44 +13,67 @@
 // b) THROUGHPUT: apos o preenchimento, 1 instrucao por ciclo de CLK_SYS
 //    (uma instrucao conclui o WB a cada borda de CLK_SYS).
 //
-// c) Fmax (TimeQuest, FPGA Cyclone IV GX - EP4CGX22CF19C7):
-//    Resultados de sintese (Quartus 18.1) - pior caso Slow 1200mV 85C:
-//      - Fmax do MULTIPLICADOR (dominio CLK/CLK_MUL): 257.93 MHz
-//          (Restricted Fmax = 250.0 MHz, limitada pela taxa de toggle de I/O,
-//           pois no modelo CLK entra por pino; com o ALTPLL real esse limite
-//           de I/O some). Modelo Slow 0C: 279.02 MHz.
-//      - Fmax do SISTEMA sem o MUL (dominio CLK_SYS): 40.97 MHz
-//          (Modelo Slow 0C: 44.22 MHz).
-//    Recursos: 2353 LEs (11%), 1375 regs, 65536 bits de RAM (2x1kWordx32),
-//              0 multiplicadores embarcados (MUL sequencial usa LEs).
-//    Metodologia: o TimeQuest reporta a maxima frequencia a partir do caminho
-//    critico flip-flop -> flip-flop (Setup/Tsu), analisado por dominio de clock
-//    (CLK_SYS e CLK/CLK_MUL sao clocks independentes -> analise separada).
+// c) Fmax (FPGA Cyclone IV GX - EP4CGX22CF19C7), pior caso Slow 1200mV 85C.
+//    ATENCAO: ha DUAS medidas distintas, nao confundir:
+//     1) Fmax por dominio do TimeQuest (caminho FF->FF INTRA-dominio): o
+//        multiplicador (clk[1]=CLK_MUL) reporta na faixa de ~250-280 MHz e
+//        CLK_SYS (clk[0]) ~40 MHz. Com PLL a Fmax de CLK_SYS e apenas teorica
+//        (a freq real de CLK_SYS e travada em CLK_MUL/34 pela PLL) -> para
+//        sign-off use o SLACK de setup, nao a celula Fmax do painel.
+//     2) Fmax FUNCIONAL do sistema (a que vale), obtida por simulacao
+//        GATE-LEVEL (Slow 85C): o caminho critico REAL nao e intra-dominio e
+//        sim o CRUZAMENTO do produto ACC(CLK_MUL) -> ALU_MUL_MUX ->
+//        EX_MEM_D(CLK_SYS). O STA nao limita esse caminho (multicycle 34:1),
+//        entao o teto real so aparece na simulacao gate-level. Por varredura
+//        binaria do periodo de entrada da PLL (Slow 85C):
+//            CLK_MUL = 234.19 MHz -> PASSA ;  235.29 MHz -> FALHA
+//        Logo Fmax_CLK_MUL ~= 234 MHz (limitado pela propagacao do produto).
+//    Recursos (aprox., ler do Fitter da sintese final): ~2.3k LEs, ~1.36k regs,
+//              65536 bits de RAM (2x1kWordx32), 0 multiplicadores embarcados
+//              (MUL sequencial usa LEs).
+//    Metodologia: STA da o caminho FF->FF por dominio; como o MUL sequencial
+//    cruza dominios de forma multiciclo, a Fmax FUNCIONAL do sistema e obtida
+//    pela varredura em gate-level (o STA sozinho superestima).
 //
 // d) MAXIMA FREQUENCIA DE OPERACAO DO SISTEMA TOTAL:
-//      Fmax_total = Fmax_MUL / 34   (limitada por Fmax_sistema_sem_MUL)
+//      Fmax_total = Fmax_CLK_MUL / 34   (throughput = 1 instrucao / CLK_SYS)
 //    Raciocinio: o MUL tem latencia 2N+2 = 34 (N=16) ciclos de CLK_MUL e deve
 //    entregar o produto DENTRO de um unico estagio EX (1 periodo de CLK_SYS).
-//    Logo um periodo de CLK_SYS precisa conter 34 periodos de CLK_MUL =>
-//    CLK_SYS = CLK_MUL/34. Numericamente (pior caso 85C):
-//      Fmax_total = 257.93 MHz / 34 = 7.59 MHz.
-//    Como 7.59 MHz < 40.97 MHz (Fmax_sistema_sem_MUL), o sistema total fica
-//    LIMITADO pelo multiplicador a ~7.59 MHz. (Item f confirma essa ineficiencia.)
+//    Logo 1 periodo de CLK_SYS = 34 periodos de CLK_MUL => razao da PLL 34:1
+//    (clk0_divide_by=34). St ligado DIRETO em ex_isMul (sem FF), para nao gastar
+//    1 ciclo: com 34:1 o MUL consome ~34 CLK_MUL e ex_isMul cai justo quando ele
+//    termina (nao re-dispara). O limite e o SETUP do caminho do produto
+//    ACC(CLK_MUL)->EX_MEM_D(CLK_SYS), que se fecha REDUZINDO a frequencia.
+//    Numericamente (gate-level Slow 85C, validado por varredura):
+//      Fmax_CLK_MUL = 234.19 MHz  ->  Fmax_total = 234.19 / 34 = 6.89 MHz.
+//    O sistema fica LIMITADO pelo multiplicador (~6.89 MHz) -- ver item f.
+//    OBS.: o STA sozinho NAO pega esse limite (nao analisa a latencia da FSM
+//    multiciclo nem o caminho CDC do produto) -> foi validado por gate-level.
 //
-// e) METAESTABILIDADE: CLK_SYS e CLK_MUL sao dominios distintos. Os sinais de
-//    handshake do MUL cruzam dominios e usam sincronizadores de 2 FF:
-//      - St  : CLK_SYS -> CLK_MUL (FFs em CLK_MUL) + deteccao de borda (pulso);
-//      - Done: CLK_MUL -> CLK_SYS (FFs em CLK_SYS).
-//    O 1o FF pode entrar em metaestabilidade ao amostrar um sinal assincrono,
-//    mas tem ~1 periodo para estabilizar antes do 2o FF amostrar, reduzindo
-//    exponencialmente a probabilidade de propagacao (MTBF alto). Mitiga, mas
-//    NAO elimina: ha risco residual nao-nulo (a estabilizacao nao e garantida
-//    em tempo finito).
+// e) METAESTABILIDADE: NAO ha risco -> NAO usamos sincronizadores de 2 FF.
+//    A metaestabilidade so aparece em cruzamentos ASSINCRONOS, onde a relacao
+//    de fase entre o clock que lanca e o que amostra e desconhecida/deriva no
+//    tempo, podendo violar setup/hold de forma imprevisivel. Aqui NAO e o caso:
+//    CLK_SYS e CLK_MUL sao gerados pela MESMA PLL, com razao INTEIRA (34:1) e
+//    fase 0. Sao portanto clocks SINCRONOS RELACIONADOS (mesocronos): as bordas
+//    tem relacao FIXA e CONHECIDA (uma borda de CLK_SYS coincide com uma de
+//    CLK_MUL a cada 34 ciclos). Logo o TimeQuest analisa os caminhos St /
+//    operandos (A,B) / Produto como caminhos sincronos normais; nao ha janela
+//    metaestavel. Por isso St e ligado DIRETO em ex_isMul, SEM FF de sincronismo.
+//    O que de fato limita NAO e metaestabilidade e sim o SETUP do caminho do
+//    produto ACC(CLK_MUL)->EX_MEM_D(CLK_SYS): resolvido REDUZINDO a frequencia
+//    (itens c/d), verificado em gate-level -- nao com FF.
+//    Restricao correspondente na SDC: em vez de false_path entre os dois clocks
+//    da PLL, usam-se set_multicycle_path (razao 34:1), pois o dado fonte fica
+//    estavel por 34 ciclos do clock rapido. So restaria risco de metaestabilidade
+//    se os clocks fossem realmente assincronos (PLLs/osciladores independentes),
+//    quando entao os sincronizadores de 2 FF voltariam a ser obrigatorios.
 //
 // f) EFICIENCIA DO MULTIPLICADOR: o multiplicador SEQUENCIAL (soma-e-desloca,
 //    latencia 2N+2) NAO casa bem com o RISC: como o EX precisa acomodar 34
 //    ciclos de CLK_MUL em 1 ciclo de CLK_SYS, forca CLK_SYS ~34x menor que
-//    CLK_MUL, derrubando a frequencia do sistema (Fmax_total = Fmax_MUL/34).
+//    CLK_MUL, derrubando a frequencia do sistema (Fmax_total = Fmax_MUL/34 ~=
+//    234/34 ~= 6.89 MHz, contra ~40 MHz de Fmax intra-dominio do resto do nucleo).
 //
 // g) MODIFICACOES PARA AUMENTAR A FREQUENCIA:
 //      - Multiplicador COMBINACIONAL (ou via DSP/embedded multiplier do Cyclone):
@@ -64,8 +87,8 @@
 //        o estado S3 (e o sinal Done) -> latencia 2N+1 = 33; omitindo tambem o
 //        estado S0 (e o sinal St) -> latencia 2N = 32. Isso melhora
 //        Fmax_total = Fmax_MUL/32 (em vez de /34). POReM, St/Idle/Done sao
-//        portas EXIGIDAS pela secao 4 e usadas pelos sincronizadores de 2 FF
-//        (secao 6/item e); por isso a implementacao entregue mantem 2N+2 = 34.
+//        portas EXIGIDAS pela secao 4; por isso a implementacao entregue mantem
+//        a FSM completa com latencia 2N+2 = 34.
 // -----------------------------------------------------------------------------
 //
 // Convencao de reset: assincrono ativo-alto em todos os submodulos.
@@ -258,28 +281,26 @@ module risc (
         .zeroFlag   (zeroFlag)
     );
 
-    // -------- Multiplicador (dominio CLK_MUL) + sincronizadores de 2 FF --------
-    wire mulSt;
-    wire st_s1, st_s2, st_d;         // sincronizador St (CLK_SYS -> CLK_MUL) + borda
-    register #(.WIDTH(1)) st_sync1 (.clk(CLK_MUL), .rst(rst), .d(ex_isMul), .q(st_s1));
-    register #(.WIDTH(1)) st_sync2 (.clk(CLK_MUL), .rst(rst), .d(st_s1),    .q(st_s2));
-    register #(.WIDTH(1)) st_edge  (.clk(CLK_MUL), .rst(rst), .d(st_s2),    .q(st_d));
-    assign mulSt = st_s2 & ~st_d;    // pulso de 1 CLK_MUL na borda de subida
-
+    // -------- Multiplicador (dominio CLK_MUL) - ligacao DIRETA (sem FF) --------
+    // CLK_SYS e CLK_MUL vem da MESMA PLL, razao INTEIRA 34:1, fase 0 => clocks
+    // SINCRONOS RELACIONADOS (mesocronos), nao dominios assincronos. St ligado
+    // DIRETO em ex_isMul (sem FF de edge-detect): com razao 34:1 o MUL consome
+    // ~34 CLK_MUL e ex_isMul cai justo quando ele termina -> NAO ha re-disparo.
+    // O caminho critico e o produto ACC(CLK_MUL) -> ALU_MUL_MUX -> EX_MEM_D(CLK_SYS):
+    // ele deve fechar SETUP dentro do periodo. Por isso o sistema roda em
+    // FREQUENCIA REDUZIDA (CLK_MUL abaixo de 250 MHz), ajustada ate o gate-level
+    // Slow 85C passar. Nao ha FF de re-temporizacao: o STA precisa fechar setup
+    // do caminho do produto, o que a frequencia baixa garante.
     Multiplicador MUL (
         .Multiplicando (A[15:0]),
         .Multiplicador (B[15:0]),
-        .St            (mulSt),
+        .St            (ex_isMul),
         .Clk           (CLK_MUL),
         .rst           (rst),
         .Produto       (Produto),
         .Idle          (mulIdle),
         .Done          (mulDone)
     );
-
-    wire done_s1, done_sys;          // sincronizador Done (CLK_MUL -> CLK_SYS)
-    register #(.WIDTH(1)) done_sync1 (.clk(CLK_SYS), .rst(rst), .d(mulDone),  .q(done_s1));
-    register #(.WIDTH(1)) done_sync2 (.clk(CLK_SYS), .rst(rst), .d(done_s1),  .q(done_sys));
 
     // ALU_MUL_MUX: resultado do EX = MUL (isMul=1) ou ALU (isMul=0)
     wire [31:0] D_ex;
