@@ -195,15 +195,11 @@ module risc (
     wire [4:0]  wb_writeReg = CTRL_wb[4:0];
     wire        wb_regWrite = CTRL_wb[5];
 
-    // RegisterFile escrito na PRIMEIRA METADE do ciclo (convencao classica do
-    // pipeline de 5 estagios sem forwarding): como registerfile.v escreve em
-    // 'posedge clk', conectamos clk = ~CLK_SYS para que a escrita do WB ocorra
-    // na borda de descida (meio do ciclo). Assim a leitura assincrona do ID, no
-    // MESMO ciclo do WB do produtor, ja enxerga o valor novo -> a distancia de
-    // hazard cai de 3 para 2 NOPs (compativel com prog_avaliacao). Nao altera a
-    // interface do banco; apenas a fase do clock de escrita.
+    // RegisterFile com escrita SINCRONA na BORDA DE SUBIDA (posedge CLK_SYS),
+    // single-edge (sem clock invertido). O hazard de 2 NOPs e tratado pelo
+    // bypass write-first abaixo (read-during-write).
     registerfile regfile (
-        .clk        (~CLK_SYS),
+        .clk        (CLK_SYS),
         .reset      (rst),
         .wr         (wb_regWrite),
         .dataIn     (writeBack),
@@ -216,10 +212,22 @@ module risc (
 
     extend ext (.INST(INST), .SignExtImm(SignExtImm));
 
+    // -------- Bypass "write-first" (read-during-write) --------------------
+    // registerfile.v escreve em posedge, simultaneo aos registradoes 
+	 // A e B: o valor escrito no WB so apareceria na leitura assincrona 
+    // do ID no ciclo SEGUINTE (exigindo 3 NOPs). Para casar com os 
+    // 2 NOPs do prog_avaliacao, encaminhamos combinacionalmente o 
+    // writeBack quando o registrador lido no ID e exatamente o que o WB esta 
+    // escrevendo NESTE ciclo (mesmo endereco, escrita ativa, != r0).
+    wire bypass1 = wb_regWrite && (wb_writeReg != 5'd0) && (wb_writeReg == rdAddress1);
+    wire bypass2 = wb_regWrite && (wb_writeReg != 5'd0) && (wb_writeReg == rdAddress2);
+    wire [31:0] rsVal_bp = bypass1 ? writeBack : rsVal;
+    wire [31:0] rtVal_bp = bypass2 ? writeBack : rtVal;
+
     register #(.WIDTH(32)) ID_EX_IMM  (.clk(CLK_SYS), .rst(rst), .d(SignExtImm), .q(IMM));
     register #(.WIDTH(15)) ID_EX_CTRL (.clk(CLK_SYS), .rst(rst), .d(CTRL_id),    .q(CTRL));
-    register #(.WIDTH(32)) ID_EX_A    (.clk(CLK_SYS), .rst(rst), .d(rsVal),      .q(A));
-    register #(.WIDTH(32)) ID_EX_B    (.clk(CLK_SYS), .rst(rst), .d(rtVal),      .q(B));
+    register #(.WIDTH(32)) ID_EX_A    (.clk(CLK_SYS), .rst(rst), .d(rsVal_bp),   .q(A));
+    register #(.WIDTH(32)) ID_EX_B    (.clk(CLK_SYS), .rst(rst), .d(rtVal_bp),   .q(B));
 
     // =========================================================================
     // EX - Execute

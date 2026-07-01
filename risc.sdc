@@ -1,20 +1,29 @@
 # =============================================================================
-# risc.sdc - Restricoes de timing (TimeQuest).
+# risc.sdc - Restricoes de timing (TimeQuest) para o projeto com IP ALTPLL.
 #
-# CLK e o clock de referencia (= CLK_MUL, 100 MHz no modelo). O modelo de PLL
-# repassa CLK_MUL = CLK e gera CLK_SYS = CLK/40 por um divisor.
+# CLK e a ENTRADA de referencia da PLL. A PLL (megafuncao ALTPLL) gera:
+#   c0 = CLK_SYS  e  c1 = CLK_MUL.
+# 'derive_pll_clocks' cria automaticamente os clocks de saida da PLL a partir
+# dos parametros do IP (multiply/divide), entao o TimeQuest analisa CADA
+# dominio (CLK_SYS e CLK_MUL) separadamente e reporta a Fmax correta por dominio.
 #
-# Definimos o clock de entrada e o clock gerado (CLK_SYS) para que o TimeQuest
-# analise os dois dominios. A Fmax reportada por dominio (caminho critico
-# FF->FF) responde aos itens (c) e (d) do roteiro.
+# IMPORTANTE: ajuste o -period de CLK para o MESMO periodo de entrada definido
+# no IP Catalog (inclk0_input_frequency). Aqui: 4 ns = 250 MHz.
 # =============================================================================
-create_clock -name CLK -period 10.000 [get_ports CLK]
+create_clock -name CLK -period 4.000 [get_ports CLK]
 
-# CLK_SYS = CLK / 40 (saida do divisor dentro do modelo de PLL)
-create_generated_clock -name CLK_SYS -source [get_ports CLK] -divide_by 40 \
-    [get_pins -nocase -compatibility_mode {*pll*c0*|q}]
-
+# cria CLK_SYS (c0) e CLK_MUL (c1) a partir dos parametros do IP ALTPLL
+derive_pll_clocks
 derive_clock_uncertainty
 
-# entradas/saidas externas sem restricao critica (barramentos externos)
+# Os sinais St (CLK_SYS->CLK_MUL) e Done (CLK_MUL->CLK_SYS) cruzam dominios por
+# sincronizadores de 2 FF (CDC). Esses caminhos sao assincronos por construcao
+# e NAO devem ser analisados como caminhos sincronos -> false_path entre os dois
+# clocks da PLL (evita Fmax falsamente baixa por caminhos inter-dominio).
+set_false_path -from [get_clocks {*|altpll_component|*clk[0]}] \
+               -to   [get_clocks {*|altpll_component|*clk[1]}]
+set_false_path -from [get_clocks {*|altpll_component|*clk[1]}] \
+               -to   [get_clocks {*|altpll_component|*clk[0]}]
+
+# barramentos externos / reset assincrono sem restricao critica
 set_false_path -from [get_ports {rst}]
