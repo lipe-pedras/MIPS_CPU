@@ -1,16 +1,4 @@
-// =============================================================================
-// pc.v - Program Counter (estagio IF).
-//
-// - Reset assincrono ativo-alto: PC -> RESET_ADDR (0x0900 = GROUP*CteMemProg).
-// - Incremento sequencial de +4 (PC enderecca BYTE; cada instrucao = 4 bytes).
-// - Desvios:
-//     * BNE (resolvido no EX): tomado quando branchFlag & ~zeroFlag.
-//       PC <- branchOffset (= PC_da_BNE + 4 + offset, calculado no EX).
-//     * JMP (resolvido no ID): jmpFlag=1 -> PC <- jmpAddress.
-//   Prioridade: BNE (instrucao mais antiga, no EX) > JMP (no ID) > PC+4.
-//
-// A saida pc e o barramento ADDR_Prog que enderecca a InstMem.
-// =============================================================================
+
 module pc #(
     parameter WIDTH      = 32,
     parameter RESET_ADDR = 32'h0000_0900

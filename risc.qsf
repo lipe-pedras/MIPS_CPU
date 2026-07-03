@@ -3,7 +3,7 @@
 # FPGA: Cyclone IV GX (obrigatorio pelo roteiro).
 # =============================================================================
 set_global_assignment -name FAMILY "Cyclone IV GX"
-set_global_assignment -name DEVICE EP4CGX22CF19C7
+set_global_assignment -name DEVICE EP4CGX150DF31I7AD
 set_global_assignment -name TOP_LEVEL_ENTITY risc
 set_global_assignment -name ORIGINAL_QUARTUS_VERSION 18.1
 set_global_assignment -name PROJECT_OUTPUT_DIRECTORY output_files

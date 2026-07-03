@@ -1,18 +1,3 @@
-// =============================================================================
-// alu.v - Unidade Logico-Aritmetica do estagio EX.
-//
-// Operacoes (selecionadas por aluControl, vindo do barramento CTRL):
-//   000 ADD  : result = A + B           (LW/SW: A+offset ; ADD)
-//   001 SUB  : result = A - B           (SUB ; comparacao do BNE)
-//   010 AND  : result = A & B           (AND)
-//   011 OR   : result = A | B           (OR ; ORI)
-//   outros   : ADD por padrao
-//
-// zeroFlag = 1 quando (A - B) == 0, ou seja, A == B.
-//   Usado pelo PC/IF para a decisao do BNE: ramo tomado = branchFlag & ~zeroFlag.
-//
-// Modulo puramente combinacional.
-// =============================================================================
 module alu #(
     parameter WIDTH = 32
 ) (

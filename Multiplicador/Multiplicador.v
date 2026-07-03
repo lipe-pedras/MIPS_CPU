@@ -1,14 +1,4 @@
-// =============================================================================
-// Multiplicador.v - Multiplicador sequencial 16x16 -> 32 bits (Lab 3/4 adaptado).
-//
-// Algoritmo soma-e-desloca, latencia 2N+2 = 34 clocks (de CLK_MUL).
-// Opera no DOMINIO DE CLOCK PROPRIO (Clk = CLK_MUL), distinto de CLK_SYS.
-// O handshake (St/Done) e sincronizado entre dominios no topo (risc.v) com
-// sincronizadores de 2 flip-flops (ver secao 6 do roteiro).
-//
-// Portas (conforme roteiro): Multiplicando, Multiplicador, St, Clk (+rst);
-//                            Produto, Idle, Done.
-// =============================================================================
+
 module Multiplicador (
     input  [15:0] Multiplicando,
     input  [15:0] Multiplicador,

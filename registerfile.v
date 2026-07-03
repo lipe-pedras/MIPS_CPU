@@ -1,10 +1,4 @@
-// =============================================================================
-// registerfile.v - Banco de registradores fornecido no laboratorio.
-//
-// Escrita SINCRONA, leitura ASSINCRONA (combinacional), reset assincrono
-// ativo-alto, r0 hard-wired em 0 (nao e armazenado).
-// Interface NAO deve ser alterada.
-// =============================================================================
+
 // Synchronous Write and Asynchronous Read
 module registerfile #(
   parameter DATA_WIDTH = 32,

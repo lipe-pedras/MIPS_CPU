@@ -1,4 +1,4 @@
-`timescale 1ns/1ps
+ `timescale 1ns/1ps
 // TestBench do banco de registradores: escrita sincrona, leitura assincrona,
 // r0 fixo em 0, reset assincrono.
 module registerfile_TB;

@@ -1,48 +1,38 @@
 `timescale 1ns/1ps
-// =============================================================================
-// risc_TB.v - TestBench do TOP. Roda o programa gravado na InstMem (Code.hex)
-// sobre a DataMemory (Data.hex) e monitora os sinais nominais da fig. 1b.
-//
-// IMPORTANTE (compatibilidade Gate Level): na sintese a hierarquia interna e
-// achatada/renomeada, entao o TB NAO acessa sinais por caminho hierarquico
-// (DUT.<...>). Em vez disso, todos os sinais nominais da fig. 1b sao marcados
-// com (*keep=1*) em risc.v e aqui espelhados por $init_signal_spy. Toda a
-// monitoracao e verificacao usam SOMENTE esses sinais espelhados -> o mesmo
-// TB roda em RTL e em Gate Level.
-//
-// O clock CLK (entrada da PLL) e identico ao definido no IP: CLK = CLK_MUL.
-// CLK_SYS = CLK_MUL / 34 (ver PLL.v).
-// =============================================================================
+
 module risc_TB;
-    reg         CLK, rst;
+    // =====================================================================
+    // Portas do DUT (fig.1b) - 10 ports, nomes/case exatos do roteiro
+    // =====================================================================
+    reg         CLK, RST;
     reg  [31:0] Prog_BUS_READ, Data_BUS_READ;
-    wire [31:0] Data_BUS_WRITE, ADDR;
+    wire [31:0] Data_BUS_WRITE, ADDR, ADDR_Prog;
+    wire        CS_P, CS, WE;
 
     risc DUT (
         .CLK            (CLK),
-        .rst            (rst),
+        .RST            (RST),
         .Prog_BUS_READ  (Prog_BUS_READ),
         .Data_BUS_READ  (Data_BUS_READ),
         .Data_BUS_WRITE (Data_BUS_WRITE),
-        .ADDR           (ADDR)
+        .ADDR           (ADDR),
+        .ADDR_Prog      (ADDR_Prog),
+        .CS_P           (CS_P),
+        .CS             (CS),
+        .WE             (WE)
     );
 
-    // ---- clock de referencia: DEVE ser igual a entrada definida no IP ALTPLL ----
-    // O ALTPLL foi configurado com inclk0_input_frequency = 4270 ps (= 4.27 ns,
-    // 234.19 MHz). Logo CLK (= inclk0 = CLK_MUL) tem periodo de 4.27 ns -> #2.135.
-    // (CLK_SYS = c0 = CLK/34 = 6.888 MHz, 145 ns.)  Se o periodo do TB nao casar
-    // com o do IP, a PLL nao trava ("input over VCO range") e o nucleo congela.
-    // FREQUENCIA REDUZIDA para o caminho do produto do MUL fechar em Slow 85C.
-    always #2.135 CLK = ~CLK;
+    // Clock de referencia da PLL = 50 MHz (periodo 20 ns) -> igual ao IP ALTPLL
+    always #10 CLK = ~CLK;
 
     // =====================================================================
-    // Sinais nominais da fig. 1b espelhados via $init_signal_spy (destinos
-    // precisam ser 'reg'). Estes sao os UNICOS sinais usados na verificacao.
+    // Sinais INTERNOS da fig.1b (nao sao portas) -> monitorados via
+    // $init_signal_spy. Mirrors locais com (*keep=1*).
+    // Obs.: CS_P, CS, WE, ADDR_Prog e ADDR sao PORTAS -> ligados direto,
+    // NAO precisam de signal_spy.
     // =====================================================================
     (*keep=1*) reg         CLK_SYS;
     (*keep=1*) reg         CLK_MUL;
-    (*keep=1*) reg         CS_P;
-    (*keep=1*) reg  [31:0] ADDR_Prog;
     (*keep=1*) reg  [31:0] INST;
     (*keep=1*) reg  [31:0] IMM;
     (*keep=1*) reg  [14:0] CTRL;
@@ -56,20 +46,22 @@ module risc_TB;
     (*keep=1*) reg         jmpFlag;
     (*keep=1*) reg  [31:0] jmpAddress;
     (*keep=1*) reg         iWE;
-    (*keep=1*) reg         WE;
     (*keep=1*) reg  [9:0]  iAddress;
     (*keep=1*) reg  [31:0] internalAddress;
-    (*keep=1*) reg         CS;
     (*keep=1*) reg         CS_WB;
     (*keep=1*) reg  [31:0] din;
     (*keep=1*) reg  [31:0] dout;
     (*keep=1*) reg  [31:0] writeBack;
 
+    // =====================================================================
+    // Amarracao dos sinais internos. $init_signal_spy precisa que o net
+    // exista com esse nome no DUT: por isso as declaracoes internas em
+    // risc.v tem (*keep=1*). Se um net for otimizado no gate-level, o spy
+    // apenas emite warning (nao aborta) e aquele mirror fica em X.
+    // =====================================================================
     initial begin
         $init_signal_spy("/risc_TB/DUT/CLK_SYS",         "/risc_TB/CLK_SYS", 1);
         $init_signal_spy("/risc_TB/DUT/CLK_MUL",         "/risc_TB/CLK_MUL", 1);
-        $init_signal_spy("/risc_TB/DUT/CS_P",            "/risc_TB/CS_P", 1);
-        $init_signal_spy("/risc_TB/DUT/ADDR_Prog",       "/risc_TB/ADDR_Prog", 1);
         $init_signal_spy("/risc_TB/DUT/INST",            "/risc_TB/INST", 1);
         $init_signal_spy("/risc_TB/DUT/IMM",             "/risc_TB/IMM", 1);
         $init_signal_spy("/risc_TB/DUT/CTRL",            "/risc_TB/CTRL", 1);
@@ -83,10 +75,8 @@ module risc_TB;
         $init_signal_spy("/risc_TB/DUT/jmpFlag",         "/risc_TB/jmpFlag", 1);
         $init_signal_spy("/risc_TB/DUT/jmpAddress",      "/risc_TB/jmpAddress", 1);
         $init_signal_spy("/risc_TB/DUT/iWE",             "/risc_TB/iWE", 1);
-        $init_signal_spy("/risc_TB/DUT/WE",              "/risc_TB/WE", 1);
         $init_signal_spy("/risc_TB/DUT/iAddress",        "/risc_TB/iAddress", 1);
         $init_signal_spy("/risc_TB/DUT/internalAddress", "/risc_TB/internalAddress", 1);
-        $init_signal_spy("/risc_TB/DUT/CS",              "/risc_TB/CS", 1);
         $init_signal_spy("/risc_TB/DUT/CS_WB",           "/risc_TB/CS_WB", 1);
         $init_signal_spy("/risc_TB/DUT/din",             "/risc_TB/din", 1);
         $init_signal_spy("/risc_TB/DUT/dout",            "/risc_TB/dout", 1);
@@ -94,25 +84,14 @@ module risc_TB;
     end
 
     // =====================================================================
-    // Monitoracao + verificacao (apenas sinais nominais espelhados).
-    // O programa termina em 'jmp Main' (laco infinito); por isso os
-    // resultados do 2o laco (com bolhas) sao LATCHED no instante em que
-    // ocorrem, e nao amostrados no fim da simulacao.
-    //
-    //   r10 = soma de Mem[0..31] = 0+1+...+9 = 45      -> writeBack == 45
-    //   r20 = 45 * 255 = 11475 (MUL no pipeline)        -> writeBack == 11475
-    //   SW r20 -> Mem[0x18FF] (ultima palavra, idx 1023): iWE & iAddress & din
+    // Verificacao funcional (debug do fim -> inicio: linha writeBack no WB)
     // =====================================================================
-    // Em Gate Level, sinais de 1 bit e o clock dividido CLK_SYS costumam ser
-    // otimizados/renomeados pela sintese (o roteiro avisa que (*keep*) pode
-    // perder sinais). Por isso a verificacao amostra no CLK do testbench
-    // (sempre presente) e usa:
-    //   - writeBack  (barramento que sobrevive a sintese, via $init_signal_spy);
-    //   - Data_BUS_WRITE / ADDR (PORTAS do top -> nunca otimizadas) p/ o SW.
     integer errors = 0;
     reg saw_wb45 = 0, saw_wb11475 = 0, saw_store11475 = 0;
     reg [31:0] prev_wb = 0;
 
+    // sobreamostra no clock de referencia (CLK_SYS via spy poderia gerar
+    // corrida de delta-cycle como borda de 'always')
     always @(posedge CLK) begin
         if (writeBack !== prev_wb && writeBack !== 32'h0) begin
             $display("t=%0t  writeBack=%h  ADDR=%h Data_BUS_WRITE=%h",
@@ -127,13 +106,11 @@ module risc_TB;
     end
 
     initial begin
-        CLK = 0; rst = 1; Prog_BUS_READ = 0; Data_BUS_READ = 0;
-        // O ALTPLL real leva alguns us para TRAVAR (locked). O nucleo deve
-        // permanecer em reset ate la, senao roda em um clock instavel e corrompe
-        // o pipeline. Mantemos rst alto ate bem depois do lock da PLL.
-        #3000 rst = 0;
-        #500000;                // tempo p/ os 2 lacos (vetor de 32) + MUL + SW
-                                // (CLK_SYS=272ns @125MHz/34 -> ~1.7x do periodo antigo)
+        CLK = 0; RST = 1; Prog_BUS_READ = 0; Data_BUS_READ = 0;
+
+        #3000 RST = 0;     // libera reset apos alguns ciclos de referencia
+        #1000000;          // ~5880 ciclos de CLK_SYS (5.88 MHz) p/ rodar o prog
+
         $display("=== verificacao final (sinais nominais da fig.1b) ===");
         if (saw_wb45)       $display("OK   writeBack = 45     (r10 = soma de Mem[0..31])");
         else begin $display("FAIL writeBack nunca chegou a 45"); errors = errors + 1; end

@@ -1,26 +1,4 @@
-// =============================================================================
-// control.v - Unidade de Controle (estagio ID).
-//
-// Decodifica INST e gera:
-//   - enderecos de leitura do RegisterFile (rdAddress1=rs, rdAddress2=rt);
-//   - o barramento de controle CTRL (registrado por ID_EX_CTRL e propagado
-//     ao longo do pipeline ate WB);
-//   - jmpFlag / jmpAddress  (JMP e resolvido AQUI, no ID -> 1 flush).
-//
-// Layout do barramento CTRL (CTRL_WIDTH = 15 bits):
-//   [4:0]   writeReg    - registrador destino (rt p/ tipo I, rd p/ tipo R)
-//   [5]     regWrite    - 1 = escreve no banco no estagio WB
-//   [6]     memWrite    - 1 = SW (WE de escrita na DataMemory)
-//   [7]     memRead     - 1 = LW (leitura da DataMemory)
-//   [8]     memToReg    - 1 = WB seleciona dado de memoria (M); 0 = D (ALU/MUL)
-//   [9]     aluSrc      - 1 = 2o operando da ALU = IMM; 0 = B (RegisterFile)
-//   [12:10] aluControl  - operacao da ALU (000 ADD,001 SUB,010 AND,011 OR)
-//   [13]    isMul       - 1 = resultado do EX vem do MUL (e dispara St)
-//   [14]    branchFlag  - 1 = BNE (decisao do desvio no EX, com zeroFlag)
-//
-// NOP (opcode 0 / funct 0) cai no default: CTRL = 0 -> pipeline neutro
-// (sem escrita em banco/memoria, sem desvio).
-// =============================================================================
+
 module control #(
     parameter PROG_BASE = 32'h0000_0900   // GROUP * CteMemProg
 ) (

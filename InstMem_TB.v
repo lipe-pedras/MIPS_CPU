@@ -5,8 +5,6 @@ module InstMem_TB;
     reg  [9:0]  addr;
     wire [31:0] INST;
 
-    // usa o Code.hex de entrega; compara a leitura sincrona contra uma copia
-    // independente do mesmo arquivo (robusto a mudancas no programa).
     InstMem DUT (.clock(clk), .address(addr), .data(32'h0), .wren(1'b0), .q(INST));
 
     always #5 clk = ~clk;

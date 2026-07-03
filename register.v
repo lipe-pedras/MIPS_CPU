@@ -1,10 +1,4 @@
-// =============================================================================
-// register.v - Registrador de estagio generico, parametrizavel em largura.
-//
-// Usado para todos os registradores de pipeline (ID_EX_*, EX_MEM_*, MEM_WB_*).
-// Reset assincrono ativo em nivel ALTO (convencao unica do projeto):
-//   always @(posedge clk or posedge rst) ... if (rst) ...
-// =============================================================================
+
 module register #(
     parameter WIDTH = 32
 ) (

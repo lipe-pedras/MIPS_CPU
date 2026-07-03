@@ -8,10 +8,11 @@
 # dominio (CLK_SYS e CLK_MUL) separadamente e reporta a Fmax correta por dominio.
 #
 # IMPORTANTE: ajuste o -period de CLK para o MESMO periodo de entrada definido
-# no IP Catalog (inclk0_input_frequency). Aqui: 4.27 ns = 234.19 MHz (freq
-# reduzida para o caminho do produto do MUL fechar setup em Slow 85C, sem FF).
+# no IP Catalog (inclk0_input_frequency = 20000 ps). Aqui: 20 ns = 50 MHz
+# (clock de referencia unico da placa; a razao interna e feita por
+# multiply/divide da PLL: CLK_MUL = 50*4/1 = 200 MHz, CLK_SYS = 50*4/34 = 5.88 MHz).
 # =============================================================================
-create_clock -name CLK -period 4.270 [get_ports CLK]
+create_clock -name CLK -period 20.000 [get_ports CLK]
 
 # cria CLK_SYS (c0) e CLK_MUL (c1) a partir dos parametros do IP ALTPLL
 derive_pll_clocks
@@ -43,4 +44,4 @@ set_multicycle_path -hold  -start 33 \
     -to   [get_clocks {*|altpll_component|*clk[0]}]
 
 # barramentos externos / reset assincrono sem restricao critica
-set_false_path -from [get_ports {rst}]
+set_false_path -from [get_ports {RST}]
