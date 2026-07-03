@@ -8,24 +8,22 @@
 //
 // b) THROUGHPUT: 1 instrucao por ciclo de CLK_SYS (apos o preenchimento).
 //
-// c) Fmax do TimeQuest (medidas isoladas, Slow 85C). NOTA: os valores abaixo
-//    foram medidos no EP4CGX22CF19C7 (grade C7); apos migrar para o
-//    EP4CGX150...I7 (grade I7, mais lento) reexecutar o TimeQuest e atualizar:
-//      - Multiplicador: Fmax = 318.88 MHz; Restricted Fmax = 250.00 MHz
+// c) Fmax do TimeQuest (medidas isoladas, Slow 85C) no dispositivo EP4CGX150DF31I7AD;
+//      - Multiplicador: Fmax = 291.63; Restricted Fmax = 250.00 MHz
 //        adota-se 250 MHz (a Restricted manda: limite fisico do clock do
 //        dispositivo, abaixo da Fmax pura do caminho critico).
-//      - Sistema (nucleo RISC sem o MUL): 86.67 MHz.
+//      - Sistema (nucleo RISC sem o MUL): Fmax: 89.22 MHz; Restricted Fmax: 89.22 MHz.
 //
 // d) MAXIMA FREQUENCIA DE OPERACAO DO SISTEMA:
-//      Fmax_teorico = Fmax_CLK_MUL / 34 = 7.35 MHz (menor do que Fmax do sistema)
+//      Fmax_teorico = Fmax_CLK_MUL / 34 = 5,88 MHz (menor do que Fmax do sistema)
 //    O MUL sequencial tem latencia 2N+2 = 34 CLK_MUL e deve entregar o produto
 //    dentro de 1 estagio EX (1 CLK_SYS) -> razao da PLL 34:1. 
 //
-//      No entanto, os testes em gate-level, que simulam atrasos de hardware
-//      com mais detalhamento, mostraram uma violacao no tempo de Setup do 
-//      multiplicador com frequencias acima de 234 MHz, sugerindo que esta 
-//      e a frequencia maxima operacional do sistema.
+//		Para adicionar um tempo de slack e garantir o funcionamento do sistema, 
+//		foi utilizada uma frequencia de 200 MHz, multiplicando a frequencia de
+//		entrada da PLL por 4.
 //
+//    
 // e) Nao ha risco de metaestabilidade. CLK_SYS e CLK_MUL vem da mesma PLL, razao
 //    inteira 34:1 e fase 0, ou seja, clocks mesocronos, nao dominios assincronos. 
 //    So haveria risco se os clocks fossem realmente assincronos
@@ -33,8 +31,8 @@
 //
 // f) Nao e eficiente. O MUL SEQUENCIAL (latencia 2N+2 = 34) 
 //    obriga o estagio EX a caber 34 CLK_MUL em 1 CLK_SYS, forcando CLK_SYS
-//    ~34x menor que CLK_MUL: o nucleo aguentaria 86.67 MHz mas o sistema opera a
-//    ~6.89 MHz (Fmax_total = Fmax_MUL/34). O MUL e o gargalo.
+//    ~34x menor que CLK_MUL: o nucleo aguentaria 89.22 MHz mas o sistema opera a
+//    ~5.88 MHz, logo o MUL e o gargalo.
 //
 // g) MODIFICACOES PARA AUMENTAR A FREQUENCIA:
 //      - MUL COMBINACIONAL (ou DSP/embedded multiplier): 0 ciclos extras, cabe no
@@ -43,8 +41,7 @@
 //        Latencia = 5 + (k-1) ciclos; throughput = 1 instr/ciclo. Tambem elimina
 //        o /34 -> Fmax_total ~ Fmax_sistema.
 //      - Encurtar a FSM do MUL sequencial (omitir estados) -> latencia 2N = 32 ->
-//        Fmax_total = Fmax_MUL/32 (ganho pequeno; St/Idle/Done sao exigidos pela
-//        secao 4, por isso a entrega mantem a FSM completa 2N+2 = 34).
+//        Fmax_total = Fmax_MUL/32.
 // -----------------------------------------------------------------------------
 //
 // Convencao de reset: assincrono ativo-alto em todos os submodulos.
@@ -244,7 +241,7 @@ module risc (
         .Produto       (Produto),
         .Idle          (mulIdle),
         .Done          (mulDone)
-    );
+		 );
 
     // ALU_MUL_MUX: resultado do EX = MUL (isMul=1) ou ALU (isMul=0)
     wire [31:0] D_ex;
