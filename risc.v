@@ -197,7 +197,7 @@ module risc (
     extend ext (.INST(INST), .SignExtImm(SignExtImm));
 
     // -------- Bypass "write-first" (read-during-write) --------------------
-    // registerfile.v escreve em posedge, simultaneo aos registradoes 
+    // registerfile.v escreve em posedge, simultaneo aos registradores 
 	 // A e B: o valor escrito no WB so apareceria na leitura assincrona 
     // do ID no ciclo seguinte (exigindo 3 NOPs). Para casar com os 
     // 2 NOPs do prog_avaliacao, encaminhamos combinacionalmente o 

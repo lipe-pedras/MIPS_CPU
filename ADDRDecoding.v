@@ -1,20 +1,8 @@
 // =============================================================================
 // ADDRDecoding.v - Decodificador de enderecos da memoria de DADOS (MEM).
-//
-// Le o barramento D (endereco efetivo de PALAVRA = R[rs] + SignExtImm).
-// A memoria de dados ocupa 1 kWord a partir de
-//   DATA_BASE = GROUP*CteMemDados = 0x1500, faixa [0x1500, 0x1900).
-//
-// Gera:
-//   - CS              : chip-select interno x externo (1 = faixa do grupo);
-//   - internalAddress : (D - DATA_BASE) -> deslocamento interno (palavra);
-//   - iAddress        : indice efetivo da BRAM interna (10 bits);
-//   - iWE             : write-enable da DataMemory INTERNA (SW e CS);
-//   - WE              : write-enable EXTERNO (SW e ~CS);
-//   - ADDR            : endereco repassado ao barramento EXTERNO de dados.
-//
-// 'we' e o sinal memWrite vindo do barramento CTRL (1 = SW).
-// Modulo puramente combinacional.
+// Le D (endereco efetivo = R[rs] + SignExtImm) e separa interno x externo na
+// faixa de dados do grupo: DATA_BASE = GROUP*CteMemDados = [0x1500, 0x1900).
+// Combinacional. ('we' = memWrite vindo do CTRL: 1 = SW.)
 // =============================================================================
 module ADDRDecoding #(
     parameter DATA_BASE = 32'h0000_1500,

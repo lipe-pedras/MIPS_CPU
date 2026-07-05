@@ -1,15 +1,7 @@
 // =============================================================================
 // ADDRDecoding_Prog.v - Decodificador de enderecos da memoria de PROGRAMA (IF).
-//
-// O PC enderecca BYTE e a memoria de programa ocupa 1 kWord a partir de
-//   PROG_BASE = GROUP*CteMemProg = 0x0900, faixa [0x0900, 0x1900).
-//
-// Gera:
-//   - CS_P  : chip-select interno x externo (1 = dentro da faixa do grupo);
-//   - iADDR : indice de PALAVRA interno da InstMem (10 bits, 0..1023),
-//             convertido de byte para palavra: (ADDR_Prog - PROG_BASE) >> 2.
-//
-// Modulo puramente combinacional.
+// O PC enderecca BYTE; a memoria de programa ocupa 1 kWord a partir de
+//   PROG_BASE = GROUP*CteMemProg = [0x0900, 0x1900). Combinacional.
 // =============================================================================
 module ADDRDecoding_Prog #(
     parameter PROG_BASE = 32'h0000_0900,

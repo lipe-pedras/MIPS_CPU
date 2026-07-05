@@ -48,12 +48,12 @@ module control #(
 
     always @(*) begin
         // defaults neutros (NOP)
-        writeReg   = 5'd0; 			//
-        regWrite   = 1'b0;				//1
-        memWrite   = 1'b0;				//0
-        memRead    = 1'b0;				//1
-        memToReg   = 1'b0;				//1
-        aluSrc     = 1'b0;				//1
+        writeReg   = 5'd0;
+        regWrite   = 1'b0;
+        memWrite   = 1'b0;
+        memRead    = 1'b0;
+        memToReg   = 1'b0;
+        aluSrc     = 1'b0;
         aluControl = ALU_ADD;
         isMul      = 1'b0;
         branchFlag = 1'b0;
