@@ -87,7 +87,7 @@ module risc_TB;
     // Verificacao funcional (debug do fim -> inicio: linha writeBack no WB)
     // =====================================================================
     integer errors = 0;
-    reg saw_wb45 = 0, saw_wb11475 = 0, saw_store11475 = 0;
+    reg saw_wb496 = 0, saw_wb126480 = 0, saw_store126480 = 0;
     reg [31:0] prev_wb = 0;
 
     // sobreamostra no clock de referencia (CLK_SYS via spy poderia gerar
@@ -98,11 +98,11 @@ module risc_TB;
                      $time, writeBack, ADDR, Data_BUS_WRITE);
             prev_wb <= writeBack;
         end
-        if (writeBack == 32'd45)    saw_wb45    <= 1'b1;   // r10 (soma correta)
-        if (writeBack == 32'd11475) saw_wb11475 <= 1'b1;   // r20 (soma*255, MUL)
+        if (writeBack == 32'd496)    saw_wb496    <= 1'b1;   // r10 (soma 0+1+...+31 = 496)
+        if (writeBack == 32'd126480) saw_wb126480 <= 1'b1;   // r20 (496*255=126480, MUL)
         // SW r20 -> ultima palavra de dados (0x18FF): via portas do top
-        if ((ADDR == 32'h0000_18FF) && (Data_BUS_WRITE == 32'd11475))
-            saw_store11475 <= 1'b1;
+        if ((ADDR == 32'h0000_18FF) && (Data_BUS_WRITE == 32'd126480))
+            saw_store126480 <= 1'b1;
     end
 
     initial begin
@@ -112,12 +112,12 @@ module risc_TB;
         #1000000;          // ~5880 ciclos de CLK_SYS (5.88 MHz) p/ rodar o prog
 
         $display("=== verificacao final (sinais nominais da fig.1b) ===");
-        if (saw_wb45)       $display("OK   writeBack = 45     (r10 = soma de Mem[0..31])");
-        else begin $display("FAIL writeBack nunca chegou a 45"); errors = errors + 1; end
-        if (saw_wb11475)    $display("OK   writeBack = 11475  (r20 = 45*255, MUL no pipeline)");
-        else begin $display("FAIL writeBack nunca chegou a 11475"); errors = errors + 1; end
-        if (saw_store11475) $display("OK   SW: din=11475 -> Mem[0x18FF] (iWE/iAddress/din)");
-        else begin $display("FAIL SW de 11475 nao ocorreu"); errors = errors + 1; end
+        if (saw_wb496)       $display("OK   writeBack = 496    (r10 = soma de Mem[0..31])");
+        else begin $display("FAIL writeBack nunca chegou a 496"); errors = errors + 1; end
+        if (saw_wb126480)    $display("OK   writeBack = 126480 (r20 = 496*255, MUL no pipeline)");
+        else begin $display("FAIL writeBack nunca chegou a 126480"); errors = errors + 1; end
+        if (saw_store126480) $display("OK   SW: din=126480 -> Mem[0x18FF] (iWE/iAddress/din)");
+        else begin $display("FAIL SW de 126480 nao ocorreu"); errors = errors + 1; end
         if (errors == 0) $display("risc_TB: PASS");
         else             $display("risc_TB: %0d ERRORS", errors);
         $finish;
