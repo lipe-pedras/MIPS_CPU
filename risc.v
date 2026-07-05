@@ -82,16 +82,26 @@ module risc (
     (*keep=1*) wire [31:0] B;
     (*keep=1*) wire [31:0] D;
     (*keep=1*) wire [31:0] M;
-    (*keep=1*) wire        branchFlag;
+    // Sinais de 1 bit declarados como vetor [0:0]: o Quartus preserva buses
+    // nomeados no netlist gate-level (nome limpo), mas renomeia escalares
+    // combinacionais para "sinal~combout" -> o $init_signal_spy nao acha o
+    // nome exato. Com [0:0] o net sobrevive como "branchFlag" e o spy amarra.
+    // (largura 1, funcionalmente identico ao scalar; sem width warnings.)
+    // O atributo (*keep*) e o mecanismo base (mantem o wire p/ observacao em
+    // simulacao/SignalTap); ver doc oficial Intel do atributo keep:
+    //   https://www.intel.com/content/www/us/en/programmable/quartushelp/17.0/hdl/vlog/vlog_file_dir_keep.htm
+    // (a mesma doc avisa: "cannot use ... for nodes that have no fan-out" ->
+    //  e por isso que internalAddress precisou de fanout real, nao bastou keep.)
+    (*keep=1*) wire [0:0] branchFlag;
     (*keep=1*) wire [31:0] branchOffset;
-    (*keep=1*) wire        zeroFlag;
-    (*keep=1*) wire        jmpFlag;
+    (*keep=1*) wire [0:0] zeroFlag;
+    (*keep=1*) wire [0:0] jmpFlag;
     (*keep=1*) wire [31:0] jmpAddress;
-    (*keep=1*) wire        iWE;
+    (*keep=1*) wire [0:0] iWE;
     // WE e CS agora sao portas de saida (fig.1b)
     (*keep=1*) wire [9:0]  iAddress;
     (*keep=1*) wire [31:0] internalAddress;
-    (*keep=1*) wire        CS_WB;
+    (*keep=1*) wire [0:0] CS_WB;
     (*keep=1*) wire [31:0] din;
     (*keep=1*) wire [31:0] dout;
     (*keep=1*) wire [31:0] writeBack;
@@ -273,11 +283,14 @@ module risc (
         .we              (mem_memWrite),
         .CS              (CS),
         .internalAddress (internalAddress),
-        .iAddress        (iAddress),
         .iWE             (iWE),
         .WE              (WE),
         .ADDR            (ADDR)
     );
+
+    // iAddress (indice da BRAM) derivado de internalAddress AQUI, dando a este
+    // ultimo fanout real -> ambos sobrevivem no netlist gate-level (signal_spy).
+    assign iAddress = internalAddress[9:0];
 
     datamemory datamem (
         .clock  (CLK_SYS),

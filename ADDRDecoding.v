@@ -24,11 +24,14 @@ module ADDRDecoding #(
     input         we,                 // memWrite (SW)
     output        CS,
     output [31:0] internalAddress,
-    output [9:0]  iAddress,
     output        iWE,
     output        WE,
     output [31:0] ADDR
 );
+    // Obs.: o indice de 10 bits da BRAM (iAddress) e derivado de internalAddress
+    // NO TOPO (risc.v), e nao aqui. Assim internalAddress ganha fanout real e
+    // sobrevive com nome proprio no netlist gate-level (senao o Quartus o poda
+    // por ser fanout-free e o $init_signal_spy nao o encontra).
     wire in_range = (D >= DATA_BASE) && (D < DATA_BASE + NWORDS); // palavra
     assign CS              = in_range;
     // Mesma divergencia de modelo de RAM do lado de instrucao: o Data.hex tem
@@ -41,7 +44,6 @@ module ADDRDecoding #(
 `else
     assign internalAddress = (D - DATA_BASE) << 2;   // Gate: valor i na palavra 4i
 `endif
-    assign iAddress        = internalAddress[9:0];
     assign iWE             = we &  CS;   // escrita interna
     assign WE              = we & ~CS;   // escrita externa
     assign ADDR            = D;          // endereco externo
