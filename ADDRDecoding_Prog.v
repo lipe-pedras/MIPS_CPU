@@ -11,22 +11,10 @@ module ADDRDecoding_Prog #(
     output        CS_P,
     output [9:0]  iADDR
 );
-    // O modelo de RAM da SIMULACAO RTL (altera_mf altsyncram) e o modelo de
-    // GATE LEVEL (cycloneiv_ram_block) carregam o MESMO Intel HEX de formas
-    // diferentes:
-    //   - RTL  : empacota em palavras CONSECUTIVAS  -> indice = (PC-base) >> 2
-    //   - GATE : indexa por palavra = offset de byte -> indice = (PC-base)
-    // Por isso usamos um switch SO de simulacao: compile a sim RTL com
-    // +define+RTL_SIM; a sintese/Gate Level usa o ramo padrao (sem >>2).
+
     wire [31:0] aux = (ADDR_Prog - PROG_BASE);
-`ifdef RTL_SIM
-    wire in_range = (ADDR_Prog >= PROG_BASE) &&
-                    (ADDR_Prog <  PROG_BASE + (NWORDS << 2));
-    assign iADDR  = aux[11:2];     // byte -> palavra (modelo RTL)
-`else
     wire in_range = (ADDR_Prog >= PROG_BASE) &&
                     (ADDR_Prog <  PROG_BASE + NWORDS);
     assign iADDR  = aux[9:0];      // enderecamento direto (sintese/Gate)
-`endif
     assign CS_P   = in_range;
 endmodule

@@ -55,6 +55,10 @@ set_global_assignment -name EDA_TEST_BENCH_MODULE_NAME alu_TB -section_id alu_TB
 set_global_assignment -name EDA_TEST_BENCH_NAME ADDRDecoding_TB -section_id eda_simulation
 set_global_assignment -name EDA_DESIGN_INSTANCE_NAME NA -section_id ADDRDecoding_TB
 set_global_assignment -name EDA_TEST_BENCH_MODULE_NAME ADDRDecoding_TB -section_id ADDRDecoding_TB
+set_global_assignment -name PARTITION_NETLIST_TYPE SOURCE -section_id Top
+set_global_assignment -name PARTITION_FITTER_PRESERVATION_LEVEL PLACEMENT_AND_ROUTING -section_id Top
+set_global_assignment -name PARTITION_COLOR 16764057 -section_id Top
+set_global_assignment -name VERILOG_FILE risc_TB_mary.v
 set_global_assignment -name VERILOG_FILE PLL/PLL_TB.v
 set_global_assignment -name SDC_FILE simulation_constraints.sdc
 set_global_assignment -name VERILOG_FILE control_TB.v
@@ -89,9 +93,9 @@ set_global_assignment -name SDC_FILE risc.sdc
 set_global_assignment -name QIP_FILE InstMem.qip
 set_global_assignment -name QIP_FILE datamemory.qip
 set_global_assignment -name QIP_FILE PLL/PLL.qip
-set_global_assignment -name PARTITION_NETLIST_TYPE SOURCE -section_id Top
-set_global_assignment -name PARTITION_FITTER_PRESERVATION_LEVEL PLACEMENT_AND_ROUTING -section_id Top
-set_global_assignment -name PARTITION_COLOR 16764057 -section_id Top
+set_global_assignment -name EDA_TEST_BENCH_NAME risc_TB_mary -section_id eda_simulation
+set_global_assignment -name EDA_DESIGN_INSTANCE_NAME NA -section_id risc_TB_mary
+set_global_assignment -name EDA_TEST_BENCH_MODULE_NAME risc_TB_mary -section_id risc_TB_mary
 set_global_assignment -name EDA_TEST_BENCH_FILE risc_TB.v -section_id risc_TB
 set_global_assignment -name EDA_TEST_BENCH_FILE mux_TB.v -section_id mux_TB
 set_global_assignment -name EDA_TEST_BENCH_FILE pc_TB.v -section_id pc_TB
@@ -102,4 +106,5 @@ set_global_assignment -name EDA_TEST_BENCH_FILE registerfile_TB.v -section_id re
 set_global_assignment -name EDA_TEST_BENCH_FILE register_TB.v -section_id register_TB
 set_global_assignment -name EDA_TEST_BENCH_FILE alu_TB.v -section_id alu_TB
 set_global_assignment -name EDA_TEST_BENCH_FILE ADDRDecoding_TB.v -section_id ADDRDecoding_TB
+set_global_assignment -name EDA_TEST_BENCH_FILE risc_TB_mary.v -section_id risc_TB_mary
 set_instance_assignment -name PARTITION_HIERARCHY root_partition -to | -section_id Top

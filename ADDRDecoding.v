@@ -22,17 +22,8 @@ module ADDRDecoding #(
     // por ser fanout-free e o $init_signal_spy nao o encontra).
     wire in_range = (D >= DATA_BASE) && (D < DATA_BASE + NWORDS); // palavra
     assign CS              = in_range;
-    // Mesma divergencia de modelo de RAM do lado de instrucao: o Data.hex tem
-    // o valor i no endereco de BYTE 4i. O modelo RTL (altsyncram) empacota ->
-    // valor i na palavra i; o modelo de GATE (cycloneiv_ram_block) indexa por
-    // palavra -> valor i na palavra 4i. Por isso o Gate precisa de <<2.
-    // (Compile a sim RTL com +define+RTL_SIM.)
-`ifdef RTL_SIM
-    assign internalAddress = (D - DATA_BASE);        // RTL: palavras consecutivas
-`else
-    assign internalAddress = (D - DATA_BASE) << 2;   // Gate: valor i na palavra 4i
-`endif
+    assign internalAddress = (D - DATA_BASE);        // indice de palavra (BRAM word-addressed)
     assign iWE             = we &  CS;   // escrita interna
-    assign WE              = we & ~CS;   // escrita externa
+    assign WE              = we;         // escrita
     assign ADDR            = D;          // endereco externo
 endmodule

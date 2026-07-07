@@ -1,5 +1,4 @@
 `timescale 1ns/1ps
-// TestBench do decodificador de enderecos de dados.
 module ADDRDecoding_TB;
     reg  [31:0] D;
     reg         we;

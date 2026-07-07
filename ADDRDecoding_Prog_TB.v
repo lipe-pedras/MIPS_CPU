@@ -1,5 +1,4 @@
 `timescale 1ns/1ps
-// TestBench do decodificador de enderecos de programa.
 module ADDRDecoding_Prog_TB;
     reg  [31:0] ADDR_Prog;
     wire        CS_P;

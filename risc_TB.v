@@ -109,8 +109,7 @@ module risc_TB;
         CLK = 0; RST = 1; Prog_BUS_READ = 0; Data_BUS_READ = 0;
 
         #3000 RST = 0;     // libera reset apos alguns ciclos de referencia
-        #1000000;          // ~5880 ciclos de CLK_SYS (5.88 MHz) p/ rodar o prog
-
+        #100000;          //
         $display("=== verificacao final (sinais nominais da fig.1b) ===");
         if (saw_wb496)       $display("OK   writeBack = 496    (r10 = soma de Mem[0..31])");
         else begin $display("FAIL writeBack nunca chegou a 496"); errors = errors + 1; end

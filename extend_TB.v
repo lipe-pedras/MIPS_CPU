@@ -1,5 +1,4 @@
 `timescale 1ns/1ps
-// TestBench do extensor de sinal.
 module extend_TB;
     reg  [31:0] INST;
     wire [31:0] SignExtImm;
