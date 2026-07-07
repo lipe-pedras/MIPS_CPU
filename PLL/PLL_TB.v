@@ -1,5 +1,4 @@
 `timescale 1ns/1ps
-// TestBench do modelo de PLL: confere razao CLK_SYS = CLK_MUL/DIV.
 module PLL_TB;
     reg  inclk0, areset;
     wire c0, c1, locked;

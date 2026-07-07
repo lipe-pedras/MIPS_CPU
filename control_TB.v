@@ -1,5 +1,4 @@
 `timescale 1ns/1ps
-// TestBench da unidade de controle: verifica a decodificacao de cada instrucao.
 module control_TB;
     reg  [31:0] INST;
     wire [4:0]  rdAddress1, rdAddress2;

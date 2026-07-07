@@ -24,7 +24,7 @@ set_global_assignment -name MAX_CORE_JUNCTION_TEMP 85
 set_global_assignment -name POWER_PRESET_COOLING_SOLUTION "23 MM HEAT SINK WITH 200 LFPM AIRFLOW"
 set_global_assignment -name POWER_BOARD_THERMAL_MODEL "NONE (CONSERVATIVE)"
 set_global_assignment -name EDA_TEST_BENCH_ENABLE_STATUS TEST_BENCH_MODE -section_id eda_simulation
-set_global_assignment -name EDA_NATIVELINK_SIMULATION_TEST_BENCH risc_TB -section_id eda_simulation
+set_global_assignment -name EDA_NATIVELINK_SIMULATION_TEST_BENCH risc_TB_mary -section_id eda_simulation
 set_global_assignment -name EDA_TEST_BENCH_NAME risc_TB -section_id eda_simulation
 set_global_assignment -name EDA_DESIGN_INSTANCE_NAME NA -section_id risc_TB
 set_global_assignment -name EDA_TEST_BENCH_MODULE_NAME risc_TB -section_id risc_TB
@@ -96,6 +96,7 @@ set_global_assignment -name QIP_FILE PLL/PLL.qip
 set_global_assignment -name EDA_TEST_BENCH_NAME risc_TB_mary -section_id eda_simulation
 set_global_assignment -name EDA_DESIGN_INSTANCE_NAME NA -section_id risc_TB_mary
 set_global_assignment -name EDA_TEST_BENCH_MODULE_NAME risc_TB_mary -section_id risc_TB_mary
+set_instance_assignment -name PARTITION_HIERARCHY root_partition -to | -section_id Top
 set_global_assignment -name EDA_TEST_BENCH_FILE risc_TB.v -section_id risc_TB
 set_global_assignment -name EDA_TEST_BENCH_FILE mux_TB.v -section_id mux_TB
 set_global_assignment -name EDA_TEST_BENCH_FILE pc_TB.v -section_id pc_TB
@@ -107,4 +108,3 @@ set_global_assignment -name EDA_TEST_BENCH_FILE register_TB.v -section_id regist
 set_global_assignment -name EDA_TEST_BENCH_FILE alu_TB.v -section_id alu_TB
 set_global_assignment -name EDA_TEST_BENCH_FILE ADDRDecoding_TB.v -section_id ADDRDecoding_TB
 set_global_assignment -name EDA_TEST_BENCH_FILE risc_TB_mary.v -section_id risc_TB_mary
-set_instance_assignment -name PARTITION_HIERARCHY root_partition -to | -section_id Top

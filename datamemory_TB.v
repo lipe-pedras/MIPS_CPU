@@ -1,5 +1,4 @@
 `timescale 1ns/1ps
-// TestBench da memoria de dados: init via hex, escrita e leitura sincronas.
 module datamemory_TB;
     reg         clk, we;
     reg  [9:0]  addr;

@@ -1,5 +1,4 @@
 `timescale 1ns/1ps
-// TestBench do registrador generico: verifica reset assincrono e captura sincrona.
 module register_TB;
     reg         clk, rst;
     reg  [31:0] d;
