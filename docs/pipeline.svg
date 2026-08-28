@@ -1,0 +1,290 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1570 830" width="1570" height="830" font-family="'DejaVu Sans','Segoe UI',system-ui,sans-serif">
+  <defs>
+    <marker id="ah" markerWidth="9" markerHeight="9" refX="8" refY="3" orient="auto"><path d="M0,0 L8,3 L0,6 z" fill="#22303f"/></marker>
+    <marker id="ahg" markerWidth="9" markerHeight="9" refX="8" refY="3" orient="auto"><path d="M0,0 L8,3 L0,6 z" fill="#1d8f52"/></marker>
+    <marker id="aho" markerWidth="9" markerHeight="9" refX="8" refY="3" orient="auto"><path d="M0,0 L8,3 L0,6 z" fill="#c2540c"/></marker>
+    <marker id="ahb" markerWidth="9" markerHeight="9" refX="8" refY="3" orient="auto"><path d="M0,0 L8,3 L0,6 z" fill="#2563eb"/></marker>
+    <marker id="ahp" markerWidth="9" markerHeight="9" refX="8" refY="3" orient="auto"><path d="M0,0 L8,3 L0,6 z" fill="#8494a5"/></marker>
+  </defs>
+
+  <rect x="0" y="0" width="1570" height="830" fill="#ffffff"/>
+  <text x="30" y="30" font-size="17" font-weight="700" fill="#12202e">5-stage pipelined RISC — Harvard, Altera BRAM-adapted datapath</text>
+  <text x="30" y="50" font-size="12" fill="#5a6b7c">risc.v · Cyclone IV GX EP4CGX150DF31I7AD · CLK_SYS = 5.88 MHz, CLK_MUL = 200 MHz from a single ALTPLL</text>
+
+<g transform="translate(90,84)">
+
+  <!-- ============ chip boundary ============ -->
+  <rect x="0" y="4" width="1362" height="650" rx="16" fill="none" stroke="#22303f" stroke-width="2.4"/>
+  <text x="16" y="26" font-size="13" font-weight="700" fill="#8494a5">module risc</text>
+
+  <!-- ============ stage bands ============ -->
+  <g stroke="#d6dde5" stroke-width="1">
+    <rect x="30"   y="110" width="262" height="440" rx="10" fill="#eef4fb"/>
+    <rect x="332"  y="110" width="208" height="440" rx="10" fill="#f4eefb"/>
+    <rect x="580"  y="110" width="272" height="440" rx="10" fill="#edfaf1"/>
+    <rect x="892"  y="110" width="216" height="440" rx="10" fill="#fbf0ec"/>
+    <rect x="1148" y="110" width="200" height="440" rx="10" fill="#f7f6f0"/>
+  </g>
+  <g font-size="15" font-weight="700" fill="#a9b6c3" text-anchor="middle">
+    <text x="161"  y="542">Instruction Fetch</text>
+    <text x="436"  y="542">Instruction Decode</text>
+    <text x="716"  y="542">Execute</text>
+    <text x="1000" y="542">Memory</text>
+    <text x="1248" y="542">Write Back</text>
+  </g>
+
+  <!-- ============ pipeline boundary register columns ============ -->
+  <g>
+    <rect x="296"  y="110" width="28" height="440" rx="5" fill="#eaeef3" stroke="#8fa0b2" stroke-width="1" stroke-dasharray="4 3"/>
+    <rect x="544"  y="110" width="28" height="440" rx="5" fill="#e3e9f0" stroke="#8fa0b2"/>
+    <rect x="856"  y="110" width="28" height="440" rx="5" fill="#e3e9f0" stroke="#8fa0b2"/>
+    <rect x="1112" y="110" width="28" height="440" rx="5" fill="#e3e9f0" stroke="#8fa0b2"/>
+  </g>
+  <g font-size="11" font-weight="700" fill="#4a5a6b" text-anchor="middle">
+    <text x="310"  y="128">IF/ID</text>
+    <text x="558"  y="128">ID/EX</text>
+    <text x="870"  y="128">EX/MEM</text>
+    <text x="1126" y="128">MEM/WB</text>
+  </g>
+  <!-- boundary registers -->
+  <g fill="#37475a" stroke="none">
+    <rect x="298"  y="478" width="24" height="26" rx="3"/>
+    <rect x="546"  y="222" width="24" height="26" rx="3"/><rect x="546" y="282" width="24" height="26" rx="3"/>
+    <rect x="546"  y="400" width="24" height="26" rx="3"/><rect x="546" y="478" width="24" height="26" rx="3"/>
+    <rect x="546"  y="510" width="24" height="26" rx="3"/>
+    <rect x="858"  y="232" width="24" height="26" rx="3"/><rect x="858" y="300" width="24" height="26" rx="3"/>
+    <rect x="858"  y="510" width="24" height="26" rx="3"/>
+    <rect x="1114" y="232" width="24" height="26" rx="3"/><rect x="1114" y="360" width="24" height="26" rx="3"/>
+    <rect x="1114" y="510" width="24" height="26" rx="3"/>
+  </g>
+  <g font-size="9" font-weight="700" fill="#ffffff" text-anchor="middle">
+    <text x="310" y="495">PC4</text>
+    <text x="558" y="239">A</text><text x="558" y="299">B</text>
+    <text x="558" y="417">IMM</text><text x="558" y="495">PC4</text><text x="558" y="527" font-size="8">CTRL</text>
+    <text x="870" y="249">D</text><text x="870" y="317" font-size="8">din</text><text x="870" y="527" font-size="8">CTRL</text>
+    <text x="1126" y="249">D</text><text x="1126" y="377" font-size="6">CS_WB</text><text x="1126" y="527" font-size="8">CTRL</text>
+  </g>
+
+  <!-- ============ PLL ============ -->
+  <rect x="300" y="16" width="150" height="44" rx="6" fill="#ffffff" stroke="#37475a" stroke-width="1.5"/>
+  <text x="375" y="43" font-size="13" font-weight="700" fill="#12202e" text-anchor="middle">ALTPLL</text>
+  <g stroke="#22303f" stroke-width="1.4" fill="none" marker-end="url(#ah)">
+    <path d="M450,30 L470,30"/><path d="M450,50 L470,50"/>
+  </g>
+  <text x="476" y="34" font-size="9.5" fill="#22303f">CLK_SYS = 5.88 MHz → pipeline regs, BRAMs, RF</text>
+  <text x="476" y="54" font-size="9.5" fill="#22303f">CLK_MUL = 200 MHz → Multiplicador only (34 : 1)</text>
+
+  <!-- ============ IF ============ -->
+  <g fill="#ffffff" stroke="#37475a" stroke-width="1.5">
+    <rect x="52" y="200" width="112" height="74" rx="5"/>
+    <rect x="52" y="320" width="112" height="58" rx="5"/>
+    <rect x="52" y="450" width="84"  height="46" rx="5"/>
+    <rect x="196" y="450" width="44" height="46" rx="5"/>
+  </g>
+  <g font-size="12" font-weight="700" fill="#12202e" text-anchor="middle">
+    <text x="108" y="233">InstMem</text>
+    <text x="94"  y="478">PC</text><text x="218" y="478">+4</text>
+  </g>
+  <text x="108" y="250" font-size="9" fill="#5a6b7c" text-anchor="middle">BRAM 1 kWord</text>
+  <text x="108" y="263" font-size="9" fill="#5a6b7c" text-anchor="middle">sync read = IF/ID reg</text>
+  <text x="108" y="344" font-size="11" font-weight="700" fill="#12202e" text-anchor="middle">ADDRDecoding</text>
+  <text x="108" y="358" font-size="11" font-weight="700" fill="#12202e" text-anchor="middle">_Prog</text>
+  <text x="108" y="371" font-size="8.5" fill="#5a6b7c" text-anchor="middle">0x0900 … 0x0D00</text>
+  <g fill="#eef2f7" stroke="#37475a" stroke-width="1.4">
+    <rect x="200" y="205" width="20" height="64" rx="8"/>
+    <rect x="250" y="205" width="20" height="64" rx="8"/>
+  </g>
+  <text x="260" y="196" font-size="9" fill="#1d8f52" font-weight="700" text-anchor="middle">flush</text>
+  <text x="224" y="286" font-size="8.5" text-anchor="end" fill="#5a6b7c">32'h0 = NOP</text>
+
+  <!-- ============ ID ============ -->
+  <rect x="352" y="200" width="120" height="120" rx="5" fill="#ffffff" stroke="#37475a" stroke-width="1.5"/>
+  <text x="412" y="250" font-size="12.5" font-weight="700" fill="#12202e" text-anchor="middle">Register File</text>
+  <text x="412" y="266" font-size="9" fill="#5a6b7c" text-anchor="middle">32 × 32 b, r0 = 0</text>
+  <text x="412" y="279" font-size="9" fill="#5a6b7c" text-anchor="middle">async read / sync write</text>
+  <ellipse cx="406" cy="390" rx="64" ry="24" fill="#ffffff" stroke="#37475a" stroke-width="1.5"/>
+  <text x="406" y="395" font-size="12.5" font-weight="700" fill="#12202e" text-anchor="middle">Control</text>
+  <rect x="356" y="436" width="100" height="34" rx="5" fill="#ffffff" stroke="#37475a" stroke-width="1.5"/>
+  <text x="406" y="458" font-size="12" font-weight="700" fill="#12202e" text-anchor="middle">Extend</text>
+  <g fill="#fdf0e4" stroke="#c2540c" stroke-width="1.6">
+    <rect x="496" y="216" width="20" height="44" rx="7"/>
+    <rect x="496" y="276" width="20" height="44" rx="7"/>
+  </g>
+
+  <!-- ============ EX ============ -->
+  <rect x="600" y="150" width="96" height="48" rx="5" fill="#ffffff" stroke="#37475a" stroke-width="1.5"/>
+  <text x="648" y="172" font-size="12" font-weight="700" fill="#12202e" text-anchor="middle">Multiplicador</text>
+  <text x="648" y="188" font-size="9" fill="#5a6b7c" text-anchor="middle">16×16 shift-add, 34 clk</text>
+  <polygon points="648,215 730,252 730,302 648,339 648,290 662,277 648,264" fill="#ffffff" stroke="#37475a" stroke-width="1.5"/>
+  <text x="686" y="283" font-size="13" font-weight="700" fill="#12202e" text-anchor="middle">ALU</text>
+  <g fill="#eef2f7" stroke="#37475a" stroke-width="1.4">
+    <rect x="612" y="270" width="20" height="56" rx="8"/>
+    <rect x="770" y="200" width="20" height="90" rx="8"/>
+  </g>
+  <text x="622" y="338" font-size="8.5" fill="#5a6b7c" text-anchor="middle">aluSrc</text>
+  <text x="780" y="300" font-size="8.5" fill="#5a6b7c" text-anchor="middle">isMul</text>
+  <circle cx="800" cy="460" r="17" fill="#ffffff" stroke="#1d8f52" stroke-width="1.6"/>
+  <text x="800" y="466" font-size="15" font-weight="700" fill="#1d8f52" text-anchor="middle">+</text>
+
+  <!-- ============ MEM ============ -->
+  <rect x="912" y="180" width="120" height="60" rx="5" fill="#ffffff" stroke="#37475a" stroke-width="1.5"/>
+  <text x="972" y="205" font-size="12" font-weight="700" fill="#12202e" text-anchor="middle">ADDRDecoding</text>
+  <text x="972" y="222" font-size="8.5" fill="#5a6b7c" text-anchor="middle">0x1500 … 0x1900</text>
+  <rect x="912" y="320" width="130" height="96" rx="5" fill="#ffffff" stroke="#37475a" stroke-width="1.5"/>
+  <text x="977" y="372" font-size="12.5" font-weight="700" fill="#12202e" text-anchor="middle">DataMemory</text>
+  <text x="977" y="388" font-size="9" fill="#5a6b7c" text-anchor="middle">BRAM 1 kWord</text>
+  <text x="977" y="401" font-size="9" fill="#5a6b7c" text-anchor="middle">sync read = MEM/WB reg</text>
+  <text x="921" y="340" font-size="9" fill="#5a6b7c">din</text>
+  <text x="1017" y="340" font-size="9" fill="#5a6b7c">dout</text>
+
+  <!-- ============ WB ============ -->
+  <g fill="#eef2f7" stroke="#37475a" stroke-width="1.4">
+    <rect x="1180" y="320" width="20" height="64" rx="8"/>
+    <rect x="1270" y="230" width="20" height="90" rx="8"/>
+  </g>
+  <text x="1190" y="311" font-size="8.5" fill="#5a6b7c" text-anchor="middle">CS_WB</text>
+  <text x="1280" y="222" font-size="8.5" fill="#5a6b7c" text-anchor="middle">memToReg</text>
+
+  <!-- ============ black datapath ============ -->
+  <g stroke="#22303f" stroke-width="1.5" fill="none" marker-end="url(#ah)">
+    <path d="M60,320 L60,278"/>
+    <path d="M164,335 L210,335 L210,273"/>
+    <path d="M164,237 L185,237 L185,256 L198,256"/>
+    <path d="M220,237 L248,237"/>
+    <path d="M232,256 L248,256"/>
+    <path d="M270,237 L340,237 L340,390 L340,453 L354,453"/>
+    <path d="M340,390 L342,390"/>
+    <path d="M136,473 L194,473"/>
+    <path d="M168,473 L168,349 L166,349"/>
+    <path d="M240,472 L270,472 L270,491 L294,491"/>
+    <path d="M406,366 L406,322"/>
+    <path d="M456,453 L520,453 L520,413 L544,413"/>
+    <path d="M470,390 L530,390 L530,523 L544,523"/>
+    <path d="M472,226 L494,226"/>
+    <path d="M472,286 L494,286"/>
+    <path d="M516,238 L544,238"/>
+    <path d="M516,298 L544,298"/>
+    <path d="M322,491 L544,491"/>
+    <path d="M570,235 L648,235 L648,240 L658,240"/>
+    <path d="M588,235 L588,166 L598,166"/>
+    <path d="M570,295 L608,295 L608,284 L610,284"/>
+    <path d="M582,295 L582,182 L598,182"/>
+    <path d="M600,295 L600,360 L840,360 L840,313 L854,313"/>
+    <path d="M570,413 L604,413 L604,312 L610,312"/>
+    <path d="M632,298 L652,298 L652,315 L658,315"/>
+    <path d="M696,174 L750,174 L750,222 L768,222"/>
+    <path d="M730,277 L756,277 L756,268 L768,268"/>
+    <path d="M790,245 L854,245"/>
+    <path d="M884,245 L1110,245"/>
+    <path d="M898,245 L898,210 L910,210"/>
+    <path d="M960,240 L960,318"/>
+    <path d="M1000,240 L1000,318"/>
+    <path d="M1032,232 L1075,232 L1075,373 L1110,373"/>
+    <path d="M1042,336 L1178,336"/>
+    <path d="M1138,373 L1138,395 L1190,395 L1190,388"/>
+    <path d="M1200,352 L1230,352 L1230,302 L1268,302"/>
+    <path d="M1138,245 L1250,245 L1250,248 L1268,248"/>
+    <path d="M1290,275 L1310,275 L1310,78 L400,78 L400,198"/>
+    <!-- CTRL pipeline chain -->
+    <path d="M570,523 L854,523"/>
+    <path d="M882,523 L1110,523"/>
+  </g>
+  <!-- CTRL_wb back to the register-file write port -->
+  <g stroke="#8494a5" stroke-width="1.4" fill="none" marker-end="url(#ahp)" stroke-dasharray="6 3">
+    <path d="M1138,523 L1330,523 L1330,96 L414,96 L414,198"/>
+  </g>
+  <text x="700" y="90" font-size="9.5" fill="#6c7d8e">CTRL_wb: regWrite / writeReg → RF write port</text>
+
+  <g fill="#22303f">
+    <circle cx="168" cy="473" r="3.2"/><circle cx="168" cy="430" r="3.2"/><circle cx="340" cy="390" r="3.2"/>
+    <circle cx="588" cy="235" r="3.2"/><circle cx="582" cy="295" r="3.2"/><circle cx="600" cy="295" r="3.2"/>
+    <circle cx="604" cy="413" r="3.2"/><circle cx="898" cy="245" r="3.2"/><circle cx="486" cy="78" r="3.2"/>
+    <circle cx="590" cy="413" r="3.2"/><circle cx="770" cy="463" r="3.2"/>
+    <circle cx="897" cy="352" r="3.2"/><circle cx="1075" cy="373" r="3.2"/>
+  </g>
+  <g font-size="9.5" fill="#22303f">
+    <text x="64"  y="300">iADDR</text>
+    <text x="168" y="331">CS_P</text>
+    <text x="300" y="230" text-anchor="middle">INST</text>
+    <text x="410" y="338" text-anchor="middle">rs / rt</text>
+    <text x="462" y="448">SignExtImm</text>
+    <text x="700" y="168">Produto</text>
+    <text x="906" y="258">D</text>
+    <text x="955" y="302" text-anchor="end">iAddress</text>
+    <text x="1006" y="302">iWE</text>
+    <text x="1204" y="348">M</text>
+    <text x="860" y="72" font-weight="700">writeBack</text>
+  </g>
+
+  <!-- ============ green control-flow ============ -->
+  <g stroke="#1d8f52" stroke-width="1.7" fill="none" marker-end="url(#ahg)">
+    <path d="M570,491 L770,491 L770,452 L781,452"/>
+    <path d="M590,413 L590,468 L781,468"/>
+    <path d="M817,460 L830,460 L830,568 L110,568 L110,498"/>
+    <path d="M430,414 L430,584 L94,584 L94,498"/>
+    <path d="M382,414 L382,540 L128,540 L128,498"/>
+    <path d="M382,540 L382,624 L558,624"/>
+    <path d="M700,339 L700,594"/>
+    <path d="M564,536 L564,610 L558,610"/>
+    <path d="M560,613 L260,613 L260,271"/>
+  </g>
+  <rect x="560" y="594" width="240" height="34" rx="6" fill="#e9f7ef" stroke="#1d8f52" stroke-width="1.6"/>
+  <text x="680" y="608" font-size="10" font-weight="700" fill="#12603a" text-anchor="middle">flush logic</text>
+  <text x="680" y="621" font-size="9" fill="#12603a" text-anchor="middle">jmpFlag_d | branchTaken | branchTaken_d</text>
+  <circle cx="382" cy="540" r="3.2" fill="#1d8f52"/>
+  <g font-size="9.5" fill="#12603a" font-weight="600">
+    <text x="836" y="556">branchOffset</text>
+    <text x="436" y="580">jmpAddress</text>
+    <text x="388" y="534">jmpFlag</text>
+    <text x="704" y="586">zeroFlag</text>
+    <text x="552" y="600" font-size="9" text-anchor="end">branchFlag</text>
+  </g>
+
+  <!-- ============ orange bypass ============ -->
+  <g stroke="#c2540c" stroke-width="2" fill="none" marker-end="url(#aho)">
+    <path d="M486,78 L486,250 L494,250"/>
+    <path d="M486,250 L486,310 L494,310"/>
+  </g>
+  <circle cx="486" cy="250" r="3.4" fill="#c2540c"/>
+  <text x="478" y="150" font-size="10.5" font-weight="700" fill="#c2540c" text-anchor="end">read-during-write</text>
+  <text x="478" y="163" font-size="10.5" font-weight="700" fill="#c2540c" text-anchor="end">bypass  WB → ID</text>
+
+  <!-- ============ top-level ports (cross the chip boundary) ============ -->
+  <g stroke="#2563eb" stroke-width="1.6" fill="none" marker-end="url(#ahb)">
+    <path d="M270,-14 L270,38 L298,38"/>
+    <path d="M-14,150 L60,150"/>
+    <path d="M182,-14 L182,218 L198,218"/>
+    <path d="M168,430 L-14,430"/>
+    <path d="M52,360 L-14,360"/>
+    <path d="M1032,190 L1050,190 L1050,-14"/>
+    <path d="M1032,212 L1105,212 L1105,668"/>
+    <path d="M1075,373 L1075,668"/>
+    <path d="M912,352 L897,352 L897,668"/>
+    <path d="M1376,470 L1160,470 L1160,368 L1178,368"/>
+  </g>
+  <g font-size="10" font-weight="600" fill="#2563eb">
+    <text x="270" y="-22" text-anchor="middle">CLK</text>
+    <text x="176" y="-22" text-anchor="end">Prog_BUS_READ</text>
+    <text x="-20" y="142" text-anchor="end">RST</text>
+    <text x="-20" y="352" text-anchor="end">CS_P</text>
+    <text x="-20" y="422" text-anchor="end">ADDR_Prog</text>
+    <text x="1050" y="-22" text-anchor="middle">ADDR</text>
+    <text x="897"  y="686" text-anchor="middle">Data_BUS_WRITE</text>
+    <text x="1075" y="686" text-anchor="middle">CS</text>
+    <text x="1105" y="702" text-anchor="middle">WE</text>
+    <text x="1382" y="474">Data_BUS_READ</text>
+  </g>
+  <text x="66" y="154" font-size="8.5" fill="#5a6b7c">async, active-high → every register</text>
+
+  <!-- ============ legend ============ -->
+  <g font-size="10.5" fill="#3a4a5a">
+    <line x1="0" y1="712" x2="36" y2="712" stroke="#22303f" stroke-width="1.6"/><text x="42" y="716">datapath</text>
+    <line x1="120" y1="712" x2="156" y2="712" stroke="#1d8f52" stroke-width="1.8"/><text x="162" y="716">control flow (JMP / BNE)</text>
+    <line x1="320" y1="712" x2="356" y2="712" stroke="#c2540c" stroke-width="2"/><text x="362" y="716">write-back bypass</text>
+    <line x1="480" y1="712" x2="516" y2="712" stroke="#8494a5" stroke-width="1.6" stroke-dasharray="6 3"/><text x="522" y="716">CTRL_wb → RF write port</text>
+    <line x1="672" y1="712" x2="708" y2="712" stroke="#2563eb" stroke-width="1.8"/><text x="714" y="716">top-level port</text>
+    <rect x="810" y="705" width="22" height="14" rx="3" fill="#37475a"/><text x="840" y="716">pipeline stage register</text>
+    <rect x="990" y="703" width="14" height="18" rx="3" fill="#eaeef3" stroke="#8fa0b2" stroke-dasharray="4 3"/><text x="1012" y="716">boundary absorbed by the BRAM output register</text>
+  </g>
+</g>
+</svg>
