@@ -8,3 +8,12 @@ transcript
 *v.bak
 *.qws
 *.rpt
+
+# Quartus / ModelSim build output and crash dumps
+cw/
+rw/
+greybox_tmp/
+*.vstf
+*.qdb
+serv_req_info.txt
+cr_ie_info.json
